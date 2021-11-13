@@ -1,4 +1,4 @@
-﻿namespace api_ef6_mysql.Controllers.Request
+﻿namespace api_ef6_mysql.Controllers.BooksController.Request
 {
     public class BookPatchRequest
     {

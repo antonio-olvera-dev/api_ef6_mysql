@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using api_ef6_mysql.Controllers.UsersController.Request;
 using api_ef6_mysql;
-using api_ef6_mysql.Controllers.BooksController.Request;
 
 namespace library_api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class BooksController : ControllerBase
+    public class UsersController : ControllerBase
     {
 
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Book>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<User>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetAll()
@@ -21,7 +21,7 @@ namespace library_api.Controllers
             {
                 using (LibraryContext? ctx = new())
                 {
-                    return Ok(ctx.Books.ToList<Book>());
+                    return Ok(ctx.Users.ToList<User>());
                 };
             }
             catch (Exception exception)
@@ -32,8 +32,8 @@ namespace library_api.Controllers
 
         }
 
-        [HttpGet("/book/{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Book))]
+        [HttpGet("/user/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Get(int id)
@@ -43,7 +43,7 @@ namespace library_api.Controllers
                 using (LibraryContext? ctx = new())
                 {
 
-                    return Ok(ctx.Books.SingleOrDefault(book => book.Id == id));
+                    return Ok(ctx.Users.SingleOrDefault(user => user.Id == id));
                 };
             }
             catch (Exception exception)
@@ -53,23 +53,22 @@ namespace library_api.Controllers
             }
         }
 
-        [HttpPost("/book")]
+        [HttpPost("/user")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult Post(BookPostRequest bookPostRequest)
+        public IActionResult Post(UserPostRequest userPostRequest)
         {
             try
             {
                 using (LibraryContext? ctx = new())
                 {
-                    Book book = new()
+                    User user = new()
                     {
-                        Name = bookPostRequest.Name,
-                        Year = bookPostRequest.Year,
-                        UsersId = bookPostRequest.UsersId
+                        Name = userPostRequest.Name,
+                        Age = userPostRequest.Age
                     };
-                    ctx.Add(book);
+                    ctx.Add(user);
                     return Ok(ctx.SaveChanges());
                 };
             }
@@ -81,11 +80,11 @@ namespace library_api.Controllers
         }
 
 
-        [HttpPatch("/book")]
+        [HttpPatch("/user")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult Patch(BookPatchRequest bookPatchRequest)
+        public IActionResult Patch(UserPatchRequest userPatchRequest)
         {
             try
             {
@@ -93,14 +92,11 @@ namespace library_api.Controllers
                 using (LibraryContext? ctx = new())
                 {
 
-                    var currentBook = ctx.Books.SingleOrDefault(book => book.Id == bookPatchRequest.Id);
-                    if (currentBook is null) return NotFound();
+                    var currentUser = ctx.Users.SingleOrDefault(user => user.Id == userPatchRequest.Id);
+                    if (currentUser is null) return NotFound();
 
-                    currentBook.Name = bookPatchRequest.Name;
-                    currentBook.Year = bookPatchRequest.Year;
-                    currentBook.UsersId = bookPatchRequest.UsersId;
-
-
+                    currentUser.Name = userPatchRequest.Name;
+                    currentUser.Age = userPatchRequest.Age;
 
                     return Ok(ctx.SaveChanges());
                 };
@@ -114,7 +110,7 @@ namespace library_api.Controllers
 
 
 
-        [HttpDelete("/book")]
+        [HttpDelete("/user")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -125,10 +121,10 @@ namespace library_api.Controllers
                 using (LibraryContext? ctx = new())
                 {
 
-                    Book currentBook = new() { Id = id };
-                    if (currentBook is null) return NotFound();
-                    ctx.Books.Attach(currentBook);
-                    ctx.Books.Remove(currentBook);
+                    User currentUser = new() { Id = id };
+                    if (currentUser is null) return NotFound();
+                    ctx.Users.Attach(currentUser);
+                    ctx.Users.Remove(currentUser);
 
                     return Ok(ctx.SaveChanges());
                 };
